@@ -1,8 +1,9 @@
-// App.jsx
 import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import "./App.css";
+
+const BASE_URL = "https://online-code-editor-backend-rwvn.onrender.com"; // ✅ Correct backend URL
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
@@ -18,12 +19,11 @@ function App() {
   const currentFiles = filesByLanguage[selectedLanguage];
   const activeCode = currentFiles.find((f) => f.name === activeFile)?.code || "";
 
- useEffect(() => {
-  if (currentFiles.length > 0) {
-    setActiveFile(currentFiles[0].name);
-  }
-}, [selectedLanguage, currentFiles]); // ✅ FIXED: include both dependencies
-
+  useEffect(() => {
+    if (currentFiles.length > 0) {
+      setActiveFile(currentFiles[0].name);
+    }
+  }, [selectedLanguage, currentFiles]);
 
   const updateCode = (newCode) => {
     const updated = currentFiles.map((f) =>
@@ -48,22 +48,20 @@ function App() {
     }
   };
 
- const handleRun = async () => {
-  const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
-  setOutput("⏳ Running...");
+  const handleRun = async () => {
+    const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+    setOutput("⏳ Running...");
 
-  try {
-    const res = await axios.post("https://online-code-editor-backend-rwvn.onrender.com/execute", {
-      language: selectedLanguage,
-      code,
-    });
-    setOutput(res.data.output);
-  } catch (err) {
-    setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
-  }
-};
-
-
+    try {
+      const res = await axios.post(`${BASE_URL}/execute`, {
+        language: selectedLanguage,
+        code,
+      });
+      setOutput(res.data.output);
+    } catch (err) {
+      setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
+    }
+  };
 
   const getExt = (lang) => {
     switch (lang) {
