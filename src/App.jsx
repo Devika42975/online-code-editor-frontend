@@ -47,18 +47,20 @@ function App() {
     }
   };
 
-  const handleRun = async () => {
-    const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
-    try {
-      const res = await axios.post("http://localhost:5000/run", {
-        language: selectedLanguage,
-        code,
-      });
-      setOutput(res.data.output);
-    } catch (err) {
-      setOutput("Execution error: " + (err.response?.data?.error || err.message));
-    }
-  };
+ const handleRun = async () => {
+  const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+
+  try {
+   const res = await axios.post("https://online-code-editor-backend-rwvn.onrender.com/execute", {
+      language: selectedLanguage, // ✅ send "python", not 71
+      code,
+    });
+    setOutput(res.data.output);
+  } catch (err) {
+    setOutput("Execution error: " + (err.response?.data?.error || err.message));
+  }
+};
+
 
   const getExt = (lang) => {
     switch (lang) {
