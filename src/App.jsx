@@ -1,22 +1,16 @@
+// App.jsx
 import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import "./App.css";
 
-const defaultTemplate = {
-  python: "print('Hello, Python!')",
-  javascript: "console.log('Hello, JavaScript!');",
-  cpp: `#include <iostream>\nusing namespace std;\nint main() {\n  cout << "Hello, C++!" << endl;\n  return 0;\n}`,
-  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello, Java!");\n  }\n}`
-};
-
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
   const [filesByLanguage, setFilesByLanguage] = useState({
-    python: [{ name: "main.py", code: defaultTemplate.python }],
-    javascript: [{ name: "main.js", code: defaultTemplate.javascript }],
-    cpp: [{ name: "main.cpp", code: defaultTemplate.cpp }],
-    java: [{ name: "main.java", code: defaultTemplate.java }],
+    python: [{ name: "main.py", code: "print('Hello, Python!')" }],
+    javascript: [{ name: "main.js", code: "console.log('Hello, JavaScript!');" }],
+    cpp: [{ name: "main.cpp", code: "#include<iostream>\nint main() { std::cout << \"Hello, C++!\"; return 0; }" }],
+    java: [{ name: "Main.java", code: "public class Main { public static void main(String[] args) { System.out.println(\"Hello, Java!\"); } }" }],
   });
   const [activeFile, setActiveFile] = useState("main.py");
   const [output, setOutput] = useState("");
@@ -28,7 +22,7 @@ function App() {
     if (currentFiles.length > 0) {
       setActiveFile(currentFiles[0].name);
     }
-  }, [selectedLanguage, currentFiles]);
+  }, [selectedLanguage]);
 
   const updateCode = (newCode) => {
     const updated = currentFiles.map((f) =>
@@ -37,30 +31,10 @@ function App() {
     setFilesByLanguage({ ...filesByLanguage, [selectedLanguage]: updated });
   };
 
-  const getExt = (lang) => {
-    switch (lang) {
-      case "python": return "py";
-      case "javascript": return "js";
-      case "cpp": return "cpp";
-      case "java": return "java";
-      default: return "txt";
-    }
-  };
-
-  const getMonacoLanguage = (lang) => {
-    switch (lang) {
-      case "python": return "python";
-      case "javascript": return "javascript";
-      case "cpp": return "cpp";
-      case "java": return "java";
-      default: return "plaintext";
-    }
-  };
-
   const handleAddFile = () => {
     const ext = getExt(selectedLanguage);
     const name = `${selectedLanguage}_file_${currentFiles.length + 1}.${ext}`;
-    const newFiles = [...currentFiles, { name, code: defaultTemplate[selectedLanguage] || "" }];
+    const newFiles = [...currentFiles, { name, code: "" }];
     setFilesByLanguage({ ...filesByLanguage, [selectedLanguage]: newFiles });
     setActiveFile(name);
   };
@@ -73,25 +47,33 @@ function App() {
     }
   };
 
- const handleRun = async () => {
-  const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+  const handleRun = async () => {
+    const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+    try {
+      const res = await axios.post("http://localhost:5000/run", {
+        language: selectedLanguage,
+        code,
+      });
+      setOutput(res.data.output);
+    } catch (err) {
+      setOutput("Execution error: " + (err.response?.data?.error || err.message));
+    }
+  };
 
-  try {
-    const res = await axios.post("https://online-code-editor-backend.onrender.com/run", {
-      language: selectedLanguage, // ✅ send "python", not 71
-      code,
-    });
-    setOutput(res.data.output);
-  } catch (err) {
-    setOutput("Execution error: " + (err.response?.data?.error || err.message));
-  }
-};
-
+  const getExt = (lang) => {
+    switch (lang) {
+      case "python": return "py";
+      case "javascript": return "js";
+      case "cpp": return "cpp";
+      case "java": return "java";
+      default: return "txt";
+    }
+  };
 
   return (
     <div className="app">
       <div className="header">
-        <h1 style={{ marginRight: "2rem" }}>💻 Online Code Editor</h1>
+        <h1>💻 Online Code Editor</h1>
         <div className="language-select">
           <label>Select Language:</label>
           <select
@@ -119,28 +101,23 @@ function App() {
                 <button onClick={() => handleDeleteFile(file.name)}>❌</button>
               </div>
             ))}
-            <button className="add-file" onClick={handleAddFile}>➕ Add File</button>
+            <button className="add-file" onClick={handleAddFile}>
+              ➕ Add File
+            </button>
           </div>
 
           <div className="editor-container">
             <Editor
               height="100%"
-              language={getMonacoLanguage(selectedLanguage)}
+              language={selectedLanguage}
               theme="vs-dark"
               value={activeCode}
               onChange={updateCode}
-              options={{
-                fontSize: 14,
-                minimap: { enabled: false },
-                automaticLayout: true,
-                tabSize: 2,
-                suggestOnTriggerCharacters: true,
-                quickSuggestions: true,
-                autoClosingBrackets: 'always',
-                formatOnType: true,
-              }}
+              defaultValue="// Write your code here"
             />
-            <button className="run-button" onClick={handleRun}>▶️ Run</button>
+            <button className="run-button" onClick={handleRun}>
+              ▶️ Run
+            </button>
           </div>
         </div>
 

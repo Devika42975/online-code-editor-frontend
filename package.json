@@ -1,5 +1,5 @@
 {
-  "name": "online-code-editor-frontend",
+  "name": "frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,8 +13,7 @@
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.10.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-split": "^2.0.14"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
