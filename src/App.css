@@ -1,142 +1,160 @@
+/* App.css */
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #1e1e1e;
-  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #ffffff;
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
   min-height: 100vh;
+  padding: 20px;
   box-sizing: border-box;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #00bfff;
-  text-align: center;
 }
 
 .header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  gap: 1rem;
 }
 
-select {
-  padding: 8px 10px;
-  border-radius: 6px;
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #00d8ff;
+}
+
+.language-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-select select {
+  padding: 8px;
+  border-radius: 5px;
   border: none;
-  background-color: #333;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
-.files {
+.main {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.editor-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+.tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
   flex-wrap: wrap;
-  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .tab {
-  background-color: #2d2d2d;
+  background-color: #2e2e2e;
   padding: 5px 10px;
   border-radius: 6px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  color: white;
 }
 
 .tab.active {
   background-color: #007acc;
-  font-weight: bold;
-}
-
-.tab:hover {
-  background-color: #444;
+  color: white;
 }
 
 .tab button {
-  background: none;
-  color: red;
+  margin-left: 8px;
+  background: transparent;
   border: none;
-  font-size: 1rem;
+  color: red;
   cursor: pointer;
 }
 
-button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
+.add-file {
+  padding: 5px 10px;
   background-color: #007acc;
   color: white;
-  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #005a99;
 }
 
 .editor-container {
-  display: flex;
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 20px;
-  flex-direction: row;
-}
-
-.editor,
-.output {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   min-height: 400px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: #1e1e1e;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-.output pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  color: #00ff88;
 }
 
 .run-button {
-  margin-top: 20px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  align-self: flex-end;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .editor-container {
+.output-panel {
+  flex: 1;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+.output-panel h3 {
+  margin-top: 0;
+  color: #00e676;
+}
+
+.output-box {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  background-color: #2e2e2e;
+  padding: 10px;
+  border-radius: 6px;
+  min-height: 300px;
+  overflow: auto;
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  .main {
     flex-direction: column;
   }
 
-  .files {
-    justify-content: center;
-  }
-
-  select, button {
+  .editor-panel,
+  .output-panel {
     width: 100%;
   }
 
-  .editor,
-  .output {
-    width: 100%;
+  .editor-container {
+    min-height: 300px;
   }
 }
