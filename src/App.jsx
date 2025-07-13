@@ -18,11 +18,12 @@ function App() {
   const currentFiles = filesByLanguage[selectedLanguage];
   const activeCode = currentFiles.find((f) => f.name === activeFile)?.code || "";
 
-  useEffect(() => {
-    if (currentFiles.length > 0) {
-      setActiveFile(currentFiles[0].name);
-    }
-  }, [selectedLanguage]);
+ useEffect(() => {
+  if (currentFiles.length > 0) {
+    setActiveFile(currentFiles[0].name);
+  }
+}, [selectedLanguage, currentFiles]); // ✅ FIXED: include both dependencies
+
 
   const updateCode = (newCode) => {
     const updated = currentFiles.map((f) =>
@@ -49,17 +50,19 @@ function App() {
 
  const handleRun = async () => {
   const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+  setOutput("⏳ Running...");
 
   try {
-   const res = await axios.post("https://online-code-editor-backend-rwvn.onrender.com/execute", {
-      language: selectedLanguage, // ✅ send "python", not 71
+    const res = await axios.post("https://online-code-editor-backend-rwvn.onrender.com/execute", {
+      language: selectedLanguage,
       code,
     });
     setOutput(res.data.output);
   } catch (err) {
-    setOutput("Execution error: " + (err.response?.data?.error || err.message));
+    setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
   }
 };
+
 
 
   const getExt = (lang) => {
