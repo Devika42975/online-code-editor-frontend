@@ -3,19 +3,19 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import "./App.css";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL; // ✅ Read from .env file
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
   const [filesByLanguage, setFilesByLanguage] = useState({
-    python: [{ name: "main.py", code: "print('Hello, Python!')" }],
+    python: [{ name: "main.py", code: "name = input('Enter name: ')\nprint('Hello', name)" }],
     javascript: [{ name: "main.js", code: "console.log('Hello, JavaScript!');" }],
-    cpp: [{ name: "main.cpp", code: "#include<iostream>\nint main() { std::cout << \"Hello, C++!\"; return 0; }" }],
-    java: [{ name: "Main.java", code: "public class Main { public static void main(String[] args) { System.out.println(\"Hello, Java!\"); } }" }],
+    cpp: [{ name: "main.cpp", code: "#include<iostream>\nusing namespace std;\nint main() { string name; cin >> name; cout << \"Hello \" << name; return 0; }" }],
+    java: [{ name: "Main.java", code: "import java.util.Scanner;\nclass Main { public static void main(String[] args) { Scanner sc = new Scanner(System.in); String name = sc.nextLine(); System.out.println(\"Hello \" + name); } }" }],
   });
+
   const [activeFile, setActiveFile] = useState("main.py");
   const [output, setOutput] = useState("");
-  const [input, setInput] = useState(""); // ✅ Custom Input
 
   const currentFiles = filesByLanguage[selectedLanguage];
   const activeCode = currentFiles.find((f) => f.name === activeFile)?.code || "";
@@ -50,21 +50,19 @@ function App() {
   };
 
   const handleRun = async () => {
-  const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
-  setOutput("⏳ Running...");
+    const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+    setOutput("⏳ Running...");
 
-  try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/run`, {
-      language: selectedLanguage,
-      code,
-      input,  // ✅ Send user input
-    });
-    setOutput(res.data.output);
-  } catch (err) {
-    setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
-  }
-};
-
+    try {
+      const res = await axios.post(`${BASE_URL}/run`, {
+        language: selectedLanguage,
+        code,
+      });
+      setOutput(res.data.output);
+    } catch (err) {
+      setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
+    }
+  };
 
   const getExt = (lang) => {
     switch (lang) {
@@ -107,9 +105,7 @@ function App() {
                 <button onClick={() => handleDeleteFile(file.name)}>❌</button>
               </div>
             ))}
-            <button className="add-file" onClick={handleAddFile}>
-              ➕ Add File
-            </button>
+            <button className="add-file" onClick={handleAddFile}>➕ Add File</button>
           </div>
 
           <div className="editor-container">
@@ -121,22 +117,11 @@ function App() {
               onChange={updateCode}
               defaultValue="// Write your code here"
             />
-            <button className="run-button" onClick={handleRun}>
-              ▶️ Run
-            </button>
+            <button className="run-button" onClick={handleRun}>▶️ Run</button>
           </div>
         </div>
 
         <div className="output-panel">
-          <h3>📥 Input</h3>
-          <textarea
-            className="input-box"
-            rows="6"
-            placeholder="Enter input here..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          ></textarea>
-
           <h3>🖥️ Output</h3>
           <div className="output-box">{output}</div>
         </div>
