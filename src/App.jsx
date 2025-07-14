@@ -3,8 +3,7 @@ import Editor from "@monaco-editor/react";
 import axios from "axios";
 import "./App.css";
 
-const BASE_URL =  "https://online-code-editor-backend-new.onrender.com";
-
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
