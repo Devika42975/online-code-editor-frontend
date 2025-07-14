@@ -8,12 +8,11 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
   const [filesByLanguage, setFilesByLanguage] = useState({
-    python: [{ name: "main.py", code: "name = input('Enter name: ')\nprint('Hello', name)" }],
+    python: [{ name: "main.py", code: "print('Hello, Python!')" }],
     javascript: [{ name: "main.js", code: "console.log('Hello, JavaScript!');" }],
-    cpp: [{ name: "main.cpp", code: "#include<iostream>\nusing namespace std;\nint main() { string name; cin >> name; cout << \"Hello \" << name; return 0; }" }],
-    java: [{ name: "Main.java", code: "import java.util.Scanner;\nclass Main { public static void main(String[] args) { Scanner sc = new Scanner(System.in); String name = sc.nextLine(); System.out.println(\"Hello \" + name); } }" }],
+    cpp: [{ name: "main.cpp", code: "#include<iostream>\nint main() { std::cout << \"Hello, C++!\"; return 0; }" }],
+    java: [{ name: "Main.java", code: "public class Main { public static void main(String[] args) { System.out.println(\"Hello, Java!\"); } }" }],
   });
-
   const [activeFile, setActiveFile] = useState("main.py");
   const [output, setOutput] = useState("");
 
@@ -56,7 +55,7 @@ function App() {
     try {
       const res = await axios.post(`${BASE_URL}/run`, {
         language: selectedLanguage,
-        code,
+        code
       });
       setOutput(res.data.output);
     } catch (err) {
@@ -105,7 +104,9 @@ function App() {
                 <button onClick={() => handleDeleteFile(file.name)}>❌</button>
               </div>
             ))}
-            <button className="add-file" onClick={handleAddFile}>➕ Add File</button>
+            <button className="add-file" onClick={handleAddFile}>
+              ➕ Add File
+            </button>
           </div>
 
           <div className="editor-container">
@@ -117,7 +118,9 @@ function App() {
               onChange={updateCode}
               defaultValue="// Write your code here"
             />
-            <button className="run-button" onClick={handleRun}>▶️ Run</button>
+            <button className="run-button" onClick={handleRun}>
+              ▶️ Run
+            </button>
           </div>
         </div>
 
