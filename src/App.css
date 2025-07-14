@@ -44,22 +44,27 @@ body {
   color: #ffffff;
 }
 
+/* Main layout */
 .main {
   display: flex;
   gap: 20px;
   flex: 1;
   flex-direction: row;
-  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .editor-panel {
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #1e1e1e;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 10px #000;
+  min-width: 0;
 }
 
 .tabs {
@@ -106,6 +111,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 400px;
+  min-width: 0;
 }
 
 .run-button {
@@ -126,6 +132,9 @@ body {
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 10px #000;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .output-panel h3 {
@@ -142,16 +151,20 @@ body {
   min-height: 300px;
   overflow: auto;
   color: #ffffff;
+  flex: 1;
 }
 
+/* Responsive layout for smaller screens */
 @media (max-width: 900px) {
   .main {
     flex-direction: column;
+    gap: 20px;
   }
 
   .editor-panel,
   .output-panel {
     width: 100%;
+    min-width: 100%;
   }
 
   .editor-container {

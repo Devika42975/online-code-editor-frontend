@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import "./App.css";
 
-const BASE_URL = "https://online-code-editor-backend-rwvn.onrender.com"; // ✅ Correct backend URL
+const BASE_URL =  "https://online-code-editor-backend-new.onrender.com";
+
 
 function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("python");
@@ -15,6 +16,7 @@ function App() {
   });
   const [activeFile, setActiveFile] = useState("main.py");
   const [output, setOutput] = useState("");
+  const editorRef = useRef(null);
 
   const currentFiles = filesByLanguage[selectedLanguage];
   const activeCode = currentFiles.find((f) => f.name === activeFile)?.code || "";
@@ -23,7 +25,15 @@ function App() {
     if (currentFiles.length > 0) {
       setActiveFile(currentFiles[0].name);
     }
-  }, [selectedLanguage, currentFiles]);
+  }, [selectedLanguage]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      editorRef.current?.layout();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const updateCode = (newCode) => {
     const updated = currentFiles.map((f) =>
@@ -53,24 +63,36 @@ function App() {
     setOutput("⏳ Running...");
 
     try {
-      const res = await axios.post(`${BASE_URL}/execute`, {
+      const res = await axios.post(`${BASE_URL}/run`, {
         language: selectedLanguage,
         code,
       });
       setOutput(res.data.output);
     } catch (err) {
-      setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
+      const errorMessage =
+        err.response?.data?.error || err.message || "Unknown Error";
+      setOutput("❌ Execution error: " + errorMessage);
     }
   };
 
   const getExt = (lang) => {
     switch (lang) {
-      case "python": return "py";
-      case "javascript": return "js";
-      case "cpp": return "cpp";
-      case "java": return "java";
-      default: return "txt";
+      case "python":
+        return "py";
+      case "javascript":
+        return "js";
+      case "cpp":
+        return "cpp";
+      case "java":
+        return "java";
+      default:
+        return "txt";
     }
+  };
+
+  const handleEditorMount = (editor) => {
+    editorRef.current = editor;
+    setTimeout(() => editor.layout(), 100); // ensure proper layout after mount
   };
 
   return (
@@ -116,7 +138,13 @@ function App() {
               theme="vs-dark"
               value={activeCode}
               onChange={updateCode}
+              onMount={handleEditorMount}
               defaultValue="// Write your code here"
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                automaticLayout: true,
+              }}
             />
             <button className="run-button" onClick={handleRun}>
               ▶️ Run
