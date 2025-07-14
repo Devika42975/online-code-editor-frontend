@@ -50,20 +50,21 @@ function App() {
   };
 
   const handleRun = async () => {
-    const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
-    setOutput("⏳ Running...");
+  const code = currentFiles.find((f) => f.name === activeFile)?.code || "";
+  setOutput("⏳ Running...");
 
-    try {
-      const res = await axios.post(`${BASE_URL}/run`, {
-        language: selectedLanguage,
-        code,
-        input, // ✅ Send custom input
-      });
-      setOutput(res.data.output);
-    } catch (err) {
-      setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
-    }
-  };
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/run`, {
+      language: selectedLanguage,
+      code,
+      input,  // ✅ Send user input
+    });
+    setOutput(res.data.output);
+  } catch (err) {
+    setOutput("❌ Execution error: " + (err.response?.data?.error || err.message));
+  }
+};
+
 
   const getExt = (lang) => {
     switch (lang) {
